@@ -6,7 +6,7 @@ from app.config import settings
 # Load logs
 logs = load_logs(settings.LOG_FILE_PATH)
 
-# Embeddings
+# ✅ DEFINE embedding_model HERE (GLOBAL)
 embedding_model = OpenAIEmbeddings(
     openai_api_key=settings.OPENAI_API_KEY
 )
@@ -26,7 +26,7 @@ def analyze_query(query):
 
     indices = search(index, query_vector)
 
-    context = "\n".join([logs[i] for i in indices[0]])
+    context = "\n".join([logs[i] for i in indices[0] if i < len(logs)])
 
     prompt = f"""
     You are a DevOps expert.
@@ -42,5 +42,6 @@ def analyze_query(query):
     - Suggested fix
     """
 
-    response = llm.predict(prompt)
-    return response
+    response = llm.invoke(prompt)
+
+    return response.content
