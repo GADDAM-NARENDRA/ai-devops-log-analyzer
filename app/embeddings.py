@@ -1,7 +1,10 @@
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import OpenAIEmbeddings
 import faiss
+from app.config import settings
 
-embeddings = OpenAIEmbeddings()
+embeddings = OpenAIEmbeddings(
+    openai_api_key=settings.OPENAI_API_KEY
+)
 
 def create_vector_store(texts):
     vectors = embeddings.embed_documents(texts)

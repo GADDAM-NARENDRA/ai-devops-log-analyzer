@@ -1,14 +1,24 @@
-from langchain.chat_models import ChatOpenAI
-from langchain.embeddings.openai import OpenAIEmbeddings
+from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from app.embeddings import create_vector_store, search
 from app.data_loader import load_logs
+from app.config import settings
 
-logs = load_logs("data/sample_logs.txt")
+# Load logs
+logs = load_logs(settings.LOG_FILE_PATH)
 
-embedding_model = OpenAIEmbeddings()
+# Embeddings
+embedding_model = OpenAIEmbeddings(
+    openai_api_key=settings.OPENAI_API_KEY
+)
+
+# Vector DB
 index, vectors = create_vector_store(logs)
 
-llm = ChatOpenAI(temperature=0)
+# LLM
+llm = ChatOpenAI(
+    temperature=settings.TEMPERATURE,
+    openai_api_key=settings.OPENAI_API_KEY
+)
 
 def analyze_query(query):
     query_vector = embedding_model.embed_query(query)
