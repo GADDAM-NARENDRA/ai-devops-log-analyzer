@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>AI DevOps Analyzer</title>
+</head>
+<body>
+    <h2>🚀 AI DevOps Log Analyzer</h2>
+
+    <input type="text" id="query" placeholder="Ask something..." size="50">
+    <button onclick="analyze()">Analyze</button>
+
+    <pre id="result"></pre>
+
+    <script>
+        async function analyze() {
+            const query = document.getElementById("query").value;
+
+            const response = await fetch("/analyze", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ query })
+            });
+
+            const data = await response.json();
+            document.getElementById("result").innerText = data.response;
+        }
+    </script>
+</body>
+</html>

@@ -1,13 +1,8 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from app.rag_pipeline import analyze_query
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
 
-app = FastAPI()
+app.mount("/static", StaticFiles(directory="app/static"), name="static")
 
-class QueryRequest(BaseModel):
-    query: str
-
-@app.post("/analyze")
-def analyze(request: QueryRequest):
-    result = analyze_query(request.query)
-    return {"response": result}
+@app.get("/")
+def home():
+    return FileResponse("app/static/index.html")
