@@ -1,0 +1,10 @@
+2026-04-10 10:01:23 ERROR pod=api-service-7d8f9d container=app OOMKilled: Container terminated due to memory limit exceeded
+2026-04-10 10:01:25 WARNING pod=api-service-7d8f9d CPU usage above 92%
+2026-04-10 10:01:30 ERROR service=auth-service Database connection timeout after 30s
+2026-04-10 10:02:10 INFO deployment=api-service Rolling update started
+2026-04-10 10:02:45 ERROR ingress=nginx 503 Service Unavailable upstream failure
+2026-04-10 10:03:12 WARNING node=node-1 Disk usage above 85%
+2026-04-10 10:04:05 ERROR pod=worker-service CrashLoopBackOff restarting container
+2026-04-10 10:05:33 INFO job=backup Backup completed successfully
+2026-04-10 10:06:10 ERROR redis Redis connection refused on port 6379
+2026-04-10 10:07:44 WARNING memory usage high in pod=api-service-7d8f9d
