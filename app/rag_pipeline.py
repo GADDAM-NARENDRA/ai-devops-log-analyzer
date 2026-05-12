@@ -2,9 +2,33 @@ from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from app.embeddings import create_vector_store, search
 from app.data_loader import load_logs
 from app.config import settings
+from pathlib import Path
+import os
 
-# Load logs
-logs = load_logs(settings.LOG_FILE_PATH)
+# Load all logs from data folder
+logs = load_logs()
+
+# Load logs grouped by source file
+def load_logs_by_file():
+    """Load logs grouped by source file"""
+    data_dir = "data"
+    logs_by_file = {}
+    
+    if not os.path.exists(data_dir):
+        return logs_by_file
+    
+    for file_path in Path(data_dir).glob("*"):
+        if file_path.is_file() and file_path.suffix in ['.log', '.txt']:
+            try:
+                with open(file_path, "r") as f:
+                    file_logs = f.readlines()
+                logs_by_file[file_path.name] = [log.strip() for log in file_logs if log.strip()]
+            except Exception as e:
+                logs_by_file[file_path.name] = [f"Error reading file: {str(e)}"]
+    
+    return logs_by_file
+
+logs_by_file = load_logs_by_file()
 
 # ✅ DEFINE embedding_model HERE (GLOBAL)
 embedding_model = OpenAIEmbeddings(
@@ -12,7 +36,11 @@ embedding_model = OpenAIEmbeddings(
 )
 
 # Vector DB
-index, vectors = create_vector_store(logs)
+try:
+    index, vectors = create_vector_store(logs)
+except Exception as e:
+    index, vectors = None, None
+    print(f"Warning: Could not create vector store: {e}")
 
 # LLM
 llm = ChatOpenAI(
@@ -21,27 +49,102 @@ llm = ChatOpenAI(
 )
 
 def analyze_query(query):
-    query_vector = embedding_model.embed_query(query)
-    query_vector = [query_vector]
+    if not index or not vectors:
+        return "Error: No logs loaded. Please run: python -m app.fetch_logs"
+    
+    try:
+        query_vector = embedding_model.embed_query(query)
+        query_vector = [query_vector]
 
-    indices = search(index, query_vector)
+        indices = search(index, query_vector)
+        context = "\n".join([logs[i] for i in indices[0] if i < len(logs)])
 
-    context = "\n".join([logs[i] for i in indices[0] if i < len(logs)])
+        prompt = f"""You are a DevOps expert. Analyze the following logs and provide:
+1. Root cause analysis
+2. Severity level (Critical/High/Medium/Low)
+3. Suggested fixes
+4. Prevention tips
 
-    prompt = f"""
-    You are a DevOps expert.
+Logs:
+{context}
 
-    Logs:
-    {context}
+Question:
+{query}
 
-    Question:
-    {query}
+Format your response clearly with sections."""
 
-    Provide:
-    - Root cause
-    - Suggested fix
+        response = llm.invoke(prompt)
+        return response.content
+    
+    except Exception as e:
+        return f"Error during analysis: {str(e)}"
+
+def analyze_logs_by_file(query=None):
     """
+    Analyze logs file by file and return separate reports
+    If query is None, generates a general analysis for each file
+    """
+    reports = {}
+    
+    for filename, file_logs in logs_by_file.items():
+        if not file_logs:
+            reports[filename] = "No logs found in this file"
+            continue
+        
+        try:
+            context = "\n".join(file_logs[:100])  # First 100 lines per file
+            
+            if query:
+                prompt = f"""You are a DevOps expert. Given this {filename} file content and the query, provide:
+1. Relevant findings
+2. Severity level (Critical/High/Medium/Low)
+3. Suggested actions
 
-    response = llm.invoke(prompt)
+{filename} content:
+{context}
 
-    return response.content
+Query:
+{query}
+
+Keep response concise and actionable."""
+            else:
+                # General analysis if no specific query
+                prompt = f"""You are a DevOps expert. Analyze this {filename} file and provide:
+1. Overall health status
+2. Issues detected (if any)
+3. Error/Warning counts
+4. Recommended actions
+5. Key alerts
+
+{filename} content (first 100 lines):
+{context}
+
+Provide a concise but comprehensive analysis."""
+            
+            response = llm.invoke(prompt)
+            reports[filename] = response.content
+        
+        except Exception as e:
+            reports[filename] = f"Error analyzing {filename}: {str(e)}"
+    
+    return reports
+
+def get_logs_summary():
+    """Get summary statistics for each log file"""
+    summary = {}
+    
+    for filename, file_logs in logs_by_file.items():
+        error_count = sum(1 for log in file_logs if 'error' in log.lower() or 'failed' in log.lower())
+        warning_count = sum(1 for log in file_logs if 'warning' in log.lower() or 'warn' in log.lower())
+        info_count = sum(1 for log in file_logs if 'info' in log.lower())
+        
+        summary[filename] = {
+            "total_lines": len(file_logs),
+            "error_count": error_count,
+            "warning_count": warning_count,
+            "info_count": info_count,
+            "critical_ratio": round((error_count / len(file_logs) * 100) if file_logs else 0, 2)
+        }
+    
+    return summary
+
