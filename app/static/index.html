@@ -53,23 +53,26 @@
         
         .tab-btn {
             padding: 12px 25px;
-            border: none;
-            background: #f0f0f0;
+            border: 2px solid #ddd;
+            background: white;
             cursor: pointer;
             font-size: 1em;
             border-radius: 8px 8px 0 0;
             transition: all 0.3s;
             font-weight: 500;
+            color: #666;
         }
         
         .tab-btn.active {
             background: #667eea;
             color: white;
-            border-bottom: 3px solid #667eea;
+            border-color: #667eea;
         }
         
         .tab-btn:hover {
-            background: #ddd;
+            background: #e8eaf6;
+            border-color: #667eea;
+            color: #333;
         }
         
         .tab-content {
@@ -287,34 +290,12 @@
         
         <div class="main-card">
             <div class="tabs">
-                <button class="tab-btn active" onclick="switchTab('query')">Query Analysis</button>
-                <button class="tab-btn" onclick="switchTab('files')">Per-File Reports</button>
+                <!-- <button class="tab-btn active" onclick="switchTab('query')">Query Analysis</button> -->
+                <button class="tab-btn active" onclick="switchTab('files')">Per-File Reports</button>
                 <button class="tab-btn" onclick="switchTab('summary')">Summary & Stats</button>
                 <button class="tab-btn" onclick="switchTab('tools')">Tools</button>
             </div>
             
-            <!-- Query Analysis Tab -->
-            <div id="query" class="tab-content active">
-                <h2 style="margin-bottom: 20px; color: #333;">🔍 Query Log Analysis</h2>
-                <p style="color: #666; margin-bottom: 20px;">Ask questions about your logs and get AI-powered insights</p>
-                
-                <div class="search-box">
-                    <input 
-                        type="text" 
-                        id="query" 
-                        placeholder="e.g., Why is my pod restarting? What caused the OOMKilled error?"
-                        onkeypress="if(event.key==='Enter') analyzeQuery()"
-                    >
-                    <button onclick="analyzeQuery()">Analyze</button>
-                </div>
-                
-                <div class="loading" id="loading-query">
-                    <div class="spinner"></div>
-                    <p>Analyzing logs...</p>
-                </div>
-                
-                <div id="result-query"></div>
-            </div>
             
             <!-- Per-File Reports Tab -->
             <div id="files" class="tab-content">
@@ -389,33 +370,6 @@
             // Show selected tab
             document.getElementById(tabName).classList.add('active');
             event.target.classList.add('active');
-        }
-        
-        async function analyzeQuery() {
-            const query = document.getElementById('query').value;
-            if (!query.trim()) {
-                alert('Please enter a query');
-                return;
-            }
-            
-            showLoading('query', true);
-            
-            try {
-                const response = await fetch('/analyze', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ query })
-                });
-                
-                const data = await response.json();
-                showLoading('query', false);
-                
-                const result = document.getElementById('result-query');
-                result.innerHTML = `<div class="result">${escapeHtml(data.response)}</div>`;
-            } catch (error) {
-                showLoading('query', false);
-                document.getElementById('result-query').innerHTML = `<div class="result error">❌ Error: ${error.message}</div>`;
-            }
         }
         
         async function analyzeByFiles() {
@@ -592,12 +546,10 @@
         }
         
         function clearResults() {
-            document.getElementById('result-query').innerHTML = '';
             document.getElementById('result-files').innerHTML = '';
             document.getElementById('stats-container').innerHTML = '';
             document.getElementById('fetch-status').innerHTML = '';
             document.getElementById('monitoring-status').innerHTML = '';
-            document.getElementById('query').value = '';
             document.getElementById('file-query').value = '';
         }
         
@@ -619,4 +571,5 @@
     </script>
 </body>
 </html>
+
 
