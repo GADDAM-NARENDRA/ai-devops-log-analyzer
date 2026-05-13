@@ -1,0 +1,37 @@
+Grafana Data - 2026-05-12T09:36:33.933915
+
+=== Datasources ===
+[DATASOURCE] aithentic-20240813 (mysql)
+[DATASOURCE] aithentic-dev (mysql)
+[DATASOURCE] aithentic-preprod (mysql)
+[DATASOURCE] aithentic-prod (mysql)
+[DATASOURCE] aithentic-qa (mysql)
+[DATASOURCE] aithentic-uat (mysql)
+[DATASOURCE] Alertmanager (alertmanager)
+[DATASOURCE] alertmanager-1 (alertmanager)
+[DATASOURCE] camptocamp-prometheus-alertmanager-datasource (camptocamp-prometheus-alertmanager-datasource)
+[DATASOURCE] cloudtrail (elasticsearch)
+
+=== Dashboards ===
+
+=== Annotations/Events ===
+[ANNOTATION] 2026-05-12T07:05:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-06} - A=97.689831, C=0.000000
+[ANNOTATION] 2026-05-12T07:05:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-03} - A=97.654237, C=0.000000
+[ANNOTATION] 2026-05-12T07:04:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-06} - A=98.145763, C=1.000000
+[ANNOTATION] 2026-05-12T07:04:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-03} - A=98.060169, C=1.000000
+[ANNOTATION] 2026-05-12T05:55:20: Aidentify RDS MYSQL - Rebooted/Restarted {alertname=Aidentify RDS MYSQL - Rebooted/Restarted, grafana_folder=Alerts, instance=db-aidentify, job=db-aidentify} - B=949.000000, C=0.000000
+[ANNOTATION] 2026-05-12T05:51:20: Aidentify RDS MYSQL - Rebooted/Restarted {alertname=Aidentify RDS MYSQL - Rebooted/Restarted, grafana_folder=Alerts, instance=db-aidentify, job=db-aidentify} - B=709.000000, C=1.000000
+[ANNOTATION] 2026-05-12T05:46:20: Aidentify RDS MYSQL - Rebooted/Restarted {alertname=Aidentify RDS MYSQL - Rebooted/Restarted, grafana_folder=Alerts, instance=db-aidentify, job=db-aidentify} - B=409.000000, C=1.000000
+[ANNOTATION] 2026-05-12T04:17:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-06} - A=97.683051, C=0.000000
+[ANNOTATION] 2026-05-12T04:17:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-05} - A=97.133898, C=0.000000
+[ANNOTATION] 2026-05-12T04:17:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-03} - A=97.628814, C=0.000000
+[ANNOTATION] 2026-05-12T04:17:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-02} - A=97.709322, C=0.000000
+[ANNOTATION] 2026-05-12T04:17:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-01} - A=97.460169, C=0.000000
+[ANNOTATION] 2026-05-12T04:14:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-06} - A=98.385593, C=1.000000
+[ANNOTATION] 2026-05-12T04:14:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-05} - A=98.450847, C=1.000000
+[ANNOTATION] 2026-05-12T04:14:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-03} - A=98.203390, C=1.000000
+[ANNOTATION] 2026-05-12T04:14:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-02} - A=98.463559, C=1.000000
+[ANNOTATION] 2026-05-12T04:14:50: AAD EC2 CPU High {alertname=AAD EC2 CPU High, grafana_folder=Alerts, instance=aad-public-01} - A=98.261864, C=1.000000
+[ANNOTATION] 2026-05-12T00:28:40: Prod RDS MYSQL - Rebooted/Restarted {alertname=Prod RDS MYSQL - Rebooted/Restarted, grafana_folder=Alerts, instance=aithentic-db-prod, job=aithentic-db-prod, policy=AWS_RDS} - B=984.000000, C=0.000000
+[ANNOTATION] 2026-05-12T00:18:40: Prod RDS MYSQL - Rebooted/Restarted {alertname=Prod RDS MYSQL - Rebooted/Restarted, grafana_folder=Alerts, instance=aithentic-db-prod, job=aithentic-db-prod, policy=AWS_RDS} - B=384.000000, C=1.000000
+[ANNOTATION] 2026-05-12T00:13:40: Prod RDS MYSQL - Rebooted/Restarted {alertname=Prod RDS MYSQL - Rebooted/Restarted, grafana_folder=Alerts, instance=aithentic-db-prod, job=aithentic-db-prod, policy=AWS_RDS} - B=84.000000, C=1.000000

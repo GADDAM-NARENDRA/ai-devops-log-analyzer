@@ -7,3 +7,5 @@ python-dotenv
 tiktoken
 langchain-openai
 numpy
+requests
+apscheduler
