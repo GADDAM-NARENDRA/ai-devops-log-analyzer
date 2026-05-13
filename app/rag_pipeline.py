@@ -5,8 +5,10 @@ from app.config import settings
 from pathlib import Path
 import os
 
-# Load all logs from data folder
-logs = load_logs()
+# Load all logs from data folder (will be reloaded dynamically)
+def get_logs():
+    """Dynamically load logs to always get the latest"""
+    return load_logs()
 
 # Load logs grouped by source file
 def load_logs_by_file():
@@ -37,7 +39,7 @@ embedding_model = OpenAIEmbeddings(
 
 # Vector DB
 try:
-    index, vectors = create_vector_store(logs)
+    index, vectors = create_vector_store(get_logs())
 except Exception as e:
     index, vectors = None, None
     print(f"Warning: Could not create vector store: {e}")
@@ -53,11 +55,13 @@ def analyze_query(query):
         return "Error: No logs loaded. Please run: python -m app.fetch_logs"
     
     try:
+        # Get fresh logs each time
+        current_logs = get_logs()
         query_vector = embedding_model.embed_query(query)
         query_vector = [query_vector]
 
         indices = search(index, query_vector)
-        context = "\n".join([logs[i] for i in indices[0] if i < len(logs)])
+        context = "\n".join([current_logs[i] for i in indices[0] if i < len(current_logs)])
 
         prompt = f"""You are a DevOps expert. Analyze the following logs and provide:
 1. Root cause analysis
