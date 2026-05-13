@@ -130,21 +130,43 @@ Provide a concise but comprehensive analysis."""
     return reports
 
 def get_logs_summary():
-    """Get summary statistics for each log file"""
+    """Get summary statistics for each log file - fresh read each time"""
     summary = {}
+    data_dir = "data"
     
-    for filename, file_logs in logs_by_file.items():
-        error_count = sum(1 for log in file_logs if 'error' in log.lower() or 'failed' in log.lower())
-        warning_count = sum(1 for log in file_logs if 'warning' in log.lower() or 'warn' in log.lower())
-        info_count = sum(1 for log in file_logs if 'info' in log.lower())
-        
-        summary[filename] = {
-            "total_lines": len(file_logs),
-            "error_count": error_count,
-            "warning_count": warning_count,
-            "info_count": info_count,
-            "critical_ratio": round((error_count / len(file_logs) * 100) if file_logs else 0, 2)
-        }
+    if not os.path.exists(data_dir):
+        return summary
+    
+    # Read files fresh to get latest stats
+    for file_path in Path(data_dir).glob("*"):
+        if file_path.is_file() and file_path.suffix in ['.log', '.txt']:
+            try:
+                with open(file_path, "r", encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    file_logs = [log.strip() for log in content.split('\n') if log.strip()]
+                
+                total_lines = len(file_logs)
+                error_count = sum(1 for log in file_logs if 'error' in log.lower() or 'failed' in log.lower() or 'exception' in log.lower())
+                warning_count = sum(1 for log in file_logs if 'warning' in log.lower() or 'warn' in log.lower())
+                info_count = sum(1 for log in file_logs if 'info' in log.lower())
+                
+                summary[file_path.name] = {
+                    "total_lines": total_lines,
+                    "error_count": error_count,
+                    "warning_count": warning_count,
+                    "info_count": info_count,
+                    "critical_ratio": round((error_count / total_lines * 100) if total_lines > 0 else 0, 2),
+                    "file_size": f"{file_path.stat().st_size / 1024:.2f} KB"
+                }
+            except Exception as e:
+                summary[file_path.name] = {
+                    "total_lines": 0,
+                    "error_count": 0,
+                    "warning_count": 0,
+                    "info_count": 0,
+                    "critical_ratio": 0,
+                    "file_size": "0 KB",
+                    "error": str(e)
+                }
     
     return summary
-
