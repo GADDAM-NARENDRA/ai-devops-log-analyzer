@@ -83,49 +83,60 @@ def analyze_logs_by_file(query=None):
     """
     Analyze logs file by file and return separate reports
     If query is None, generates a general analysis for each file
+    Fresh read from disk each time to get latest logs
     """
     reports = {}
+    data_dir = "data"
     
-    for filename, file_logs in logs_by_file.items():
-        if not file_logs:
-            reports[filename] = "No logs found in this file"
-            continue
-        
-        try:
-            context = "\n".join(file_logs[:100])  # First 100 lines per file
-            
-            if query:
-                prompt = f"""You are a DevOps expert. Given this {filename} file content and the query, provide:
+    if not os.path.exists(data_dir):
+        return {"error": "Data folder not found"}
+    
+    # Read files fresh to get latest logs
+    for file_path in Path(data_dir).glob("*"):
+        if file_path.is_file() and file_path.suffix in ['.log', '.txt']:
+            try:
+                with open(file_path, "r", encoding='utf-8', errors='ignore') as f:
+                    content = f.read()
+                    file_logs = [log.strip() for log in content.split('\n') if log.strip()]
+                
+                if not file_logs:
+                    reports[file_path.name] = "No logs found in this file"
+                    continue
+                
+                context = "\n".join(file_logs[:100])  # First 100 lines per file
+                
+                if query:
+                    prompt = f"""You are a DevOps expert. Given this {file_path.name} file content and the query, provide:
 1. Relevant findings
 2. Severity level (Critical/High/Medium/Low)
 3. Suggested actions
 
-{filename} content:
+{file_path.name} content:
 {context}
 
 Query:
 {query}
 
 Keep response concise and actionable."""
-            else:
-                # General analysis if no specific query
-                prompt = f"""You are a DevOps expert. Analyze this {filename} file and provide:
+                else:
+                    # General analysis if no specific query
+                    prompt = f"""You are a DevOps expert. Analyze this {file_path.name} file and provide:
 1. Overall health status
 2. Issues detected (if any)
 3. Error/Warning counts
 4. Recommended actions
 5. Key alerts
 
-{filename} content (first 100 lines):
+{file_path.name} content (first 100 lines):
 {context}
 
 Provide a concise but comprehensive analysis."""
+                
+                response = llm.invoke(prompt)
+                reports[file_path.name] = response.content
             
-            response = llm.invoke(prompt)
-            reports[filename] = response.content
-        
-        except Exception as e:
-            reports[filename] = f"Error analyzing {filename}: {str(e)}"
+            except Exception as e:
+                reports[file_path.name] = f"Error analyzing {file_path.name}: {str(e)}"
     
     return reports
 
