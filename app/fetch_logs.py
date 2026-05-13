@@ -31,9 +31,9 @@ def fetch_and_save_all_logs(hours: int = 24, grafana_api_key: str = None):
         )
         loki_logs = loki.fetch_all_logs(hours=hours)
         loki_path = os.path.join(data_dir, "loki.log")
-        with open(loki_path, "w") as f:
+        with open(loki_path, "a") as f:
             f.write(loki_logs)
-        print(f"✅ Loki logs saved to {loki_path}")
+        print(f"✅ Loki logs appended to {loki_path}")
     except Exception as e:
         print(f"❌ Error fetching Loki logs: {e}")
     
@@ -45,9 +45,9 @@ def fetch_and_save_all_logs(hours: int = 24, grafana_api_key: str = None):
         )
         prometheus_metrics = prometheus.fetch_all_metrics(hours=hours)
         prometheus_path = os.path.join(data_dir, "prometheus.log")
-        with open(prometheus_path, "w") as f:
+        with open(prometheus_path, "a") as f:
             f.write(prometheus_metrics)
-        print(f"✅ Prometheus metrics saved to {prometheus_path}")
+        print(f"✅ Prometheus metrics appended to {prometheus_path}")
     except Exception as e:
         print(f"❌ Error fetching Prometheus metrics: {e}")
     
@@ -60,9 +60,9 @@ def fetch_and_save_all_logs(hours: int = 24, grafana_api_key: str = None):
         )
         grafana_data = grafana.fetch_all_data(hours=hours)
         grafana_path = os.path.join(data_dir, "grafana.log")
-        with open(grafana_path, "w") as f:
+        with open(grafana_path, "a") as f:
             f.write(grafana_data)
-        print(f"✅ Grafana data saved to {grafana_path}")
+        print(f"✅ Grafana data appended to {grafana_path}")
     except Exception as e:
         print(f"❌ Error fetching Grafana data: {e}")
     
